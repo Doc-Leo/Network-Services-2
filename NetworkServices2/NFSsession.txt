@@ -1,0 +1,135 @@
+──(doc730㉿kali)-[~]
+└─$ sudo nmap -sS -T4 -A -p- 10.10.174.31 -oN nmap_smtp.txt
+
+[sudo] password for doc730: 
+Starting Nmap 7.94SVN ( https://nmap.org ) at 2024-12-21 22:26 PST
+Nmap scan report for 10.10.174.31
+Host is up (0.24s latency).
+Not shown: 65533 closed tcp ports (reset)
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   2048 62:a7:03:13:39:08:5a:07:80:1a:e5:27:ee:9b:22:5d (RSA)
+|   256 89:d0:40:92:15:09:39:70:17:6e:c5:de:5b:59:ee:cb (ECDSA)
+|_  256 56:7c:d0:c4:95:2b:77:dd:53:d6:e6:73:99:24:f6:86 (ED25519)
+25/tcp open  smtp    Postfix smtpd
+|_smtp-commands: polosmtp.home, PIPELINING, SIZE 10240000, VRFY, ETRN, STARTTLS, ENHANCEDSTATUSCODES, 8BITMIME, DSN, SMTPUTF8
+| ssl-cert: Subject: commonName=polosmtp
+| Subject Alternative Name: DNS:polosmtp
+| Not valid before: 2020-04-22T18:38:06
+|_Not valid after:  2030-04-20T18:38:06
+|_ssl-date: TLS randomness does not represent time
+No exact OS matches for host (If you know what OS is running on it, see https://nmap.org/submit/ ).
+TCP/IP fingerprint:
+OS:SCAN(V=7.94SVN%E=4%D=12/21%OT=22%CT=1%CU=34854%PV=Y%DS=2%DC=T%G=Y%TM=676
+OS:6D103%P=x86_64-pc-linux-gnu)SEQ(SP=FB%GCD=1%ISR=104%TI=Z%CI=Z%II=I%TS=A)
+OS:OPS(O1=M509ST11NW6%O2=M509ST11NW6%O3=M509NNT11NW6%O4=M509ST11NW6%O5=M509
+OS:ST11NW6%O6=M509ST11)WIN(W1=F4B3%W2=F4B3%W3=F4B3%W4=F4B3%W5=F4B3%W6=F4B3)
+OS:ECN(R=Y%DF=Y%T=40%W=F507%O=M509NNSNW6%CC=Y%Q=)T1(R=Y%DF=Y%T=40%S=O%A=S+%
+OS:F=AS%RD=0%Q=)T2(R=N)T3(R=N)T4(R=Y%DF=Y%T=40%W=0%S=A%A=Z%F=R%O=%RD=0%Q=)T
+OS:5(R=Y%DF=Y%T=40%W=0%S=Z%A=S+%F=AR%O=%RD=0%Q=)T6(R=Y%DF=Y%T=40%W=0%S=A%A=
+OS:Z%F=R%O=%RD=0%Q=)T7(R=Y%DF=Y%T=40%W=0%S=Z%A=S+%F=AR%O=%RD=0%Q=)U1(R=Y%DF
+OS:=N%T=40%IPL=164%UN=0%RIPL=G%RID=G%RIPCK=G%RUCK=G%RUD=G)IE(R=Y%DFI=N%T=40
+OS:%CD=S)
+
+Network Distance: 2 hops
+Service Info: Host:  polosmtp.home; OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+TRACEROUTE (using port 1025/tcp)
+HOP RTT       ADDRESS
+1   223.08 ms 10.21.0.1
+2   223.25 ms 10.10.174.31
+
+OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 257.11 seconds
+                                                                                
+┌──(doc730㉿kali)-[~]
+└─$ msfconsole -q                                                      
+msf6 > search smtp_version
+
+Matching Modules
+================
+
+   #  Name                                 Disclosure Date  Rank    Check  Description
+   -  ----                                 ---------------  ----    -----  -----------
+   0  auxiliary/scanner/smtp/smtp_version  .                normal  No     SMTP Banner Grabber
+
+
+Interact with a module by name or index. For example info 0, use 0 or use auxiliary/scanner/smtp/smtp_version
+
+msf6 > use 0
+msf6 auxiliary(scanner/smtp/smtp_version) > show options
+
+Module options (auxiliary/scanner/smtp/smtp_version):
+
+   Name     Current Setting  Required  Description
+   ----     ---------------  --------  -----------
+   RHOSTS                    yes       The target host(s), see https://docs.me
+                                       tasploit.com/docs/using-metasploit/basi
+                                       cs/using-metasploit.html
+   RPORT    25               yes       The target port (TCP)
+   THREADS  1                yes       The number of concurrent threads (max o
+                                       ne per host)
+
+
+View the full module info with the info, or info -d command.
+
+msf6 auxiliary(scanner/smtp/smtp_version) > set RHOSTS 10.10.174.31
+RHOSTS => 10.10.174.31
+msf6 auxiliary(scanner/smtp/smtp_version) > search smtp_enum
+
+Matching Modules
+================
+
+   #  Name                              Disclosure Date  Rank    Check  Description
+   -  ----                              ---------------  ----    -----  -----------
+   0  auxiliary/scanner/smtp/smtp_enum  .                normal  No     SMTP User Enumeration Utility
+
+
+Interact with a module by name or index. For example info 0, use 0 or use auxiliary/scanner/smtp/smtp_enum
+
+msf6 auxiliary(scanner/smtp/smtp_version) > search smtp_enum
+
+Matching Modules
+================
+
+   #  Name                              Disclosure Date  Rank    Check  Description
+   -  ----                              ---------------  ----    -----  -----------
+   0  auxiliary/scanner/smtp/smtp_enum  .                normal  No     SMTP User Enumeration Utility
+
+
+Interact with a module by name or index. For example info 0, use 0 or use auxiliary/scanner/smtp/smtp_enum
+
+msf6 auxiliary(scanner/smtp/smtp_version) > use 0
+msf6 auxiliary(scanner/smtp/smtp_enum) > show options
+
+Module options (auxiliary/scanner/smtp/smtp_enum):
+
+   Name       Current Setting                                                Required  Description
+   ----       ---------------                                                --------  -----------
+   RHOSTS                                                                    yes       The target host(s), see https://docs.metasploit.com/docs/using-metasploit/basics/using-metasploit.html
+   RPORT      25                                                             yes       The target port (TCP)
+   THREADS    1                                                              yes       The number of concurrent threads (max one per host)
+   UNIXONLY   true                                                           yes       Skip Microsoft bannered servers when testing unix users
+   USER_FILE  /usr/share/metasploit-framework/data/wordlists/unix_users.txt  yes       The file that contains a list of probable users accounts.
+
+
+View the full module info with the info, or info -d command.
+
+msf6 auxiliary(scanner/smtp/smtp_enum) > use 0
+msf6 auxiliary(scanner/smtp/smtp_enum) > set USER_FILE /usr/share/wordlists/seclists/Usernames/top-usernames-shortlist.txt
+USER_FILE => /usr/share/wordlists/seclists/Usernames/top-usernames-shortlist.txt
+msf6 auxiliary(scanner/smtp/smtp_enum) > set RHOSTS 10.10.98.49
+RHOSTS => 10.10.98.49
+msf6 auxiliary(scanner/smtp/smtp_enum) > set RHOSTS 10.10.174.31
+RHOSTS => 10.10.174.31
+msf6 auxiliary(scanner/smtp/smtp_enum) > run
+
+[*] 10.10.174.31:25       - 10.10.174.31:25 Banner: 220 polosmtp.home ESMTP Postfix (Ubuntu)
+[+] 10.10.174.31:25       - 10.10.174.31:25 Users found: administrator
+[*] 10.10.174.31:25       - Scanned 1 of 1 hosts (100% complete)
+[*] Auxiliary module execution completed
+msf6 auxiliary(scanner/smtp/smtp_enum) > Interrupt: use the 'exit' command to quit
+msf6 auxiliary(scanner/smtp/smtp_enum) > exit
+                                                                                                                                                                                                                                            
+┌──(doc730㉿kali)-[~]

